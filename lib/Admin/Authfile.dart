@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unisafe/Admin/Admindashboardscreen.dart';
+import 'package:unisafe/Admin/adminscreen.dart';
 
 
 class Authfile extends StatefulWidget {
@@ -63,7 +64,7 @@ class _AuthfileState extends State<Authfile> {
       if (res.user != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const Admindashboardscreen()),
+          MaterialPageRoute(builder: (_) => const AdminDashboard()),
         );
         // ignore: avoid_print
         print("Login successful");

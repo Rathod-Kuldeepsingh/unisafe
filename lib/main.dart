@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unisafe/Admin/Admindashboardscreen.dart';
 import 'package:unisafe/Admin/AuthFile.dart';
+import 'package:unisafe/Admin/adminscreen.dart';
 import 'package:unisafe/Student/Dashboard.dart';
 import 'package:unisafe/WelcomeScreen/SplashScreen.dart';
 import 'package:unisafe/WelcomeScreen/Startedpage.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
     
-      home: Dashboard(),
+      home: SplashScreen(),
 
       routes: {
         "/adminauth" : (context) => Authfile(),

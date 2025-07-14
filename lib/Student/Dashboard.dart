@@ -15,6 +15,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final locationController = TextEditingController();
 
@@ -63,11 +64,13 @@ class _DashboardState extends State<Dashboard> {
     required String imageUrl,
     required String description,
     required String location,
+    required String title,
   }) async {
     final supabase = Supabase.instance.client;
 
     try {
       final response = await supabase.from('incident_reports').insert({
+        'title': title,
         'image_url': imageUrl,
         'description': description,
         'location': location,
@@ -79,6 +82,7 @@ class _DashboardState extends State<Dashboard> {
         setState(() {
           _imageFile = null;
           _uploadedImageUrl = null;
+          titleController.clear();
           descriptionController.clear();
           locationController.clear();
         });
@@ -174,12 +178,31 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    double responsiveFont(double size) => screenWidth * (size / 375);
+
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.blueAccent,
+        title: Text(
+          "Report",
+          style: GoogleFonts.inter(
+            textStyle: TextStyle(
+              fontSize: responsiveFont(24),
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 100),
+            SizedBox(height: screenHeight * 0.04),
             Row(
               children: [
                 Padding(
@@ -188,7 +211,7 @@ class _DashboardState extends State<Dashboard> {
                     'Add Incident Photo',
                     style: GoogleFonts.inter(
                       textStyle: TextStyle(
-                        fontSize: 16,
+                        fontSize: responsiveFont(14),
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
                       ),
@@ -228,7 +251,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: screenHeight * 0.030),
                       Row(
                         children: [
                           Expanded(
@@ -242,7 +265,7 @@ class _DashboardState extends State<Dashboard> {
                                 "Camera",
                                 style: GoogleFonts.inter(
                                   textStyle: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: responsiveFont(14),
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -259,7 +282,7 @@ class _DashboardState extends State<Dashboard> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: screenWidth * 0.030),
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: () => _pickImage(ImageSource.gallery),
@@ -271,7 +294,7 @@ class _DashboardState extends State<Dashboard> {
                                 "Gallery",
                                 style: GoogleFonts.inter(
                                   textStyle: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: responsiveFont(14),
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -306,20 +329,70 @@ class _DashboardState extends State<Dashboard> {
                           "Uploaded Successfully",
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
-                              fontSize: 14,
+                              fontSize: responsiveFont(14),
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        SizedBox(height: screenHeight * 0.030),
                       ],
                     ],
                   ),
                 ),
               ),
             ),
-
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 10),
+                  child: Text(
+                    'Report Title',
+                    style: GoogleFonts.inter(
+                      textStyle: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+             Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Container(
+                        height: screenWidth * 0.18,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: TextField(
+                            cursorColor: Colors.blueAccent,
+                            controller: titleController,
+                            style: GoogleFonts.inter(fontSize: 14),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Enter the Report Title",
+                              hintStyle: TextStyle(color: Colors.grey[600]),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
             Column(
               children: [
                 Row(
@@ -330,7 +403,7 @@ class _DashboardState extends State<Dashboard> {
                         'Incident Description',
                         style: GoogleFonts.inter(
                           textStyle: TextStyle(
-                            fontSize: 16,
+                            fontSize: responsiveFont(14),
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
                           ),
@@ -344,27 +417,39 @@ class _DashboardState extends State<Dashboard> {
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Container(
-                        height: 150, // ⬅️ Makes the box visually large
+                        height:
+                            screenHeight *
+                            0.15, // ⬅️ Makes the box visually large
                         decoration: BoxDecoration(
                           color: Colors.grey[100],
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
-                        child: TextField(
-                          controller: descriptionController,
-                          maxLines: null, // allows unlimited lines
-                          keyboardType: TextInputType.multiline,
-                          textInputAction: TextInputAction.newline,
-                          style: GoogleFonts.inter(fontSize: 14),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Describe the Incident Details....",
-                            hintStyle: TextStyle(color: Colors.grey[600]),
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: TextField(
+                            cursorColor: Colors.blueAccent,
+                            controller: descriptionController,
+                            maxLines: null, // allows unlimited lines
+                            keyboardType: TextInputType.multiline,
+                            textInputAction: TextInputAction.newline,
+                            style: GoogleFonts.inter(
+                              fontSize: responsiveFont(13),
+                            ),
+                            decoration: InputDecoration(
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              hintText: "Describe the Incident Details....",
+                              hintStyle: TextStyle(color: Colors.grey[600]),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 15,
+                              ),
                             ),
                           ),
                         ),
@@ -395,30 +480,45 @@ class _DashboardState extends State<Dashboard> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(10),
-                      child: TextField(
-                        controller: locationController,
-                        style: GoogleFonts.inter(fontSize: 14),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Enter the Location",
-                          hintStyle: TextStyle(color: Colors.grey[600]),
-                          filled: true,
-                          fillColor: Colors.grey[100],
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
+                      child: Container(
+                        height: screenWidth * 0.18,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: TextField(
+                            cursorColor: Colors.blueAccent,
+                            controller: locationController,
+                            style: GoogleFonts.inter(fontSize: 14),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: "Enter the Location",
+                              hintStyle: TextStyle(color: Colors.grey[600]),
+                              filled: true,
+                              fillColor: Colors.grey[100],
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
+
+                SizedBox(height: screenHeight * 0.03),
                 ElevatedButton(
                   onPressed: () {
                     if (_uploadedImageUrl != null &&
                         descriptionController.text.isNotEmpty &&
                         locationController.text.isNotEmpty) {
                       _submitReport(
+                        title: titleController.text,
                         imageUrl: _uploadedImageUrl!,
                         description: descriptionController.text,
                         location: locationController.text,
@@ -429,8 +529,28 @@ class _DashboardState extends State<Dashboard> {
                       );
                     }
                   },
-                  child: Text("Submit Report"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 20,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    "Submit Report",
+                    style: GoogleFonts.inter(
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
                 ),
+                SizedBox(height: 30),
               ],
             ),
           ],
