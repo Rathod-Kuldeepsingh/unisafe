@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:unisafe/Admin/Admindashboardscreen.dart';
 import 'package:unisafe/Admin/adminscreen.dart';
 
 
@@ -271,28 +270,9 @@ class _AuthfileState extends State<Authfile> {
                   SizedBox(
                     width: screenWidth * 0.7,
                     height: 50,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.blueAccent.withOpacity(0.5),
-                            Color.fromARGB(255, 64, 229, 251),
-                            const Color.fromARGB(
-                              255,
-                              33,
-                              192,
-                              182,
-                            ).withOpacity(0.5),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ElevatedButton(
+                    child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
+                          backgroundColor: Colors.blueAccent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -315,7 +295,6 @@ class _AuthfileState extends State<Authfile> {
                         ),
                       ),
                     ),
-                  ),
                   SizedBox(height: 20,),
                 ],
               ),

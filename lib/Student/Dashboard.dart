@@ -2,6 +2,8 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
@@ -171,9 +173,55 @@ class _DashboardState extends State<Dashboard> {
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 4),
+        duration: const Duration(seconds: 2),
       ),
     );
+  }
+
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check if location services are enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      _showError('Location services are disabled.');
+      return;
+    }
+
+    // Check location permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        _showError('Location permissions are denied.');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      _showError('Location permissions are permanently denied.');
+      return;
+    }
+
+    // Get current position
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    // Convert lat/long to human-readable address
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      position.latitude,
+      position.longitude,
+    );
+
+    Placemark place = placemarks[0];
+    String address =
+        "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
+
+    setState(() {
+      locationController.text = address;
+    });
   }
 
   @override
@@ -185,6 +233,7 @@ class _DashboardState extends State<Dashboard> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.blueAccent,
         title: Text(
@@ -202,7 +251,7 @@ class _DashboardState extends State<Dashboard> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: screenHeight * 0.04),
+            SizedBox(height: screenHeight * 0.01),
             Row(
               children: [
                 Padding(
@@ -359,40 +408,40 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ],
             ),
-             Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Container(
-                        height: screenWidth * 0.18,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: TextField(
-                            cursorColor: Colors.blueAccent,
-                            controller: titleController,
-                            style: GoogleFonts.inter(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Enter the Report Title",
-                              hintStyle: TextStyle(color: Colors.grey[600]),
-                              filled: true,
-                              fillColor: Colors.grey[100],
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Container(
+                    height: screenWidth * 0.18,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: TextField(
+                        cursorColor: Colors.blueAccent,
+                        controller: titleController,
+                        style: GoogleFonts.inter(fontSize: 14),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Enter the Report Title",
+                          hintStyle: TextStyle(color: Colors.grey[600]),
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
                           ),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
+              ],
+            ),
             Column(
               children: [
                 Row(
@@ -476,34 +525,29 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-                Column(
+                Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Container(
-                        height: screenWidth * 0.18,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade300),
+                      padding: const EdgeInsets.only(left: 10, bottom: 4),
+                      child: ElevatedButton.icon(
+                        onPressed: _getCurrentLocation,
+                        icon: const Icon(
+                          Icons.my_location,
+                          color: Colors.white,
+                          size: 18,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: TextField(
-                            cursorColor: Colors.blueAccent,
-                            controller: locationController,
-                            style: GoogleFonts.inter(fontSize: 14),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Enter the Location",
-                              hintStyle: TextStyle(color: Colors.grey[600]),
-                              filled: true,
-                              fillColor: Colors.grey[100],
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 16,
-                              ),
-                            ),
+                        label: Text(
+                          "Use My Location",
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),
@@ -524,9 +568,7 @@ class _DashboardState extends State<Dashboard> {
                         location: locationController.text,
                       );
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Please complete all fields")),
-                      );
+                      _showError("Please Feild all Details");
                     }
                   },
                   style: ElevatedButton.styleFrom(
