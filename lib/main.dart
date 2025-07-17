@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
-
+   // location me issue aa raha ahai check karna baki hai 
       routes: {
         "/adminauth": (context) => Authfile(),
         "/student": (context) => Dashboard(),
