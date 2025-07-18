@@ -44,7 +44,7 @@
 
 | Student Report Screen | Admin Dashboard |
 |-----------------------|-----------------|
-| ![Student Screenshot](assets/screens/student_form.png) | ![Admin Screenshot](assets/screens/admin_dashboard.png) |
+| ![Student Screenshot](assets/screens/logo.png) | ![Admin Screenshot](assets/screens/admin_dashboard.png) |
 
 ---
 
