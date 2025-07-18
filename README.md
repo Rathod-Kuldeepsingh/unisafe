@@ -44,9 +44,19 @@
 
 | Student Report Screen | Admin Dashboard |
 |-----------------------|-----------------|
-| ![Student Screenshot](assets/screens/logo.png) | ![Admin Screenshot](assets/screens/admin_dashboard.png) |
-
----
+<p align="center">
+  <img src="assets/screens/Startscreen.png" alt="Start Screen" width="200"/>
+  <img src="assets/screens/Fill.png" alt="Fill Details Screen" width="200"/>
+  <img src="assets/screens/Submit.png" alt="Submit Screen" width="200"/>
+   <img src="assets/screens/authfile.png" alt="Submit Screen" width="200"/>
+   <img src="assets/screens/adminpage.png" alt="Submit Screen" width="200"/>
+   <img src="assets/screens/fullview.png" alt="Submit Screen" width="200"/>
+   <img src="assets/screens/adminauth.png" alt="Submit Screen" width="200"/>
+   <img src="assets/screens/edit.png" alt="Submit Screen" width="200"/>
+   <img src="assets/screens/login.png" alt="Submit Screen" width="200"/>
+  
+  
+</p>
 
 ## 📋 How to Run
 
