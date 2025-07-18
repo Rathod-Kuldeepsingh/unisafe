@@ -1,10 +1,13 @@
 // ignore_for_file: file_names, deprecated_member_use, use_build_context_synchronously
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unisafe/Admin/adminscreen.dart';
-
 
 class Authfile extends StatefulWidget {
   const Authfile({super.key});
@@ -14,7 +17,7 @@ class Authfile extends StatefulWidget {
 }
 
 class _AuthfileState extends State<Authfile> {
-    bool isPasswordVisible = false;
+  bool isPasswordVisible = false;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -38,7 +41,9 @@ class _AuthfileState extends State<Authfile> {
               ),
               child: Row(
                 children: [
-                  CircularProgressIndicator(color: Colors.blueAccent),
+                  Platform.isIOS
+                      ? const CupertinoActivityIndicator(radius: 12)
+                      : CircularProgressIndicator(color: Colors.blue.shade700),
                   SizedBox(width: 20),
                   Expanded(
                     child: Text(
@@ -56,8 +61,8 @@ class _AuthfileState extends State<Authfile> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-     await Future.delayed(Duration(seconds: 5));
-     
+      await Future.delayed(Duration(seconds: 5));
+
       Navigator.pop(context); // Close dialog
 
       if (res.user != null) {
@@ -65,6 +70,14 @@ class _AuthfileState extends State<Authfile> {
           context,
           MaterialPageRoute(builder: (_) => const AdminDashboard()),
         );
+
+        // used as sharedpreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isAdminLoggedIn', true);
+        Navigator.pushReplacementNamed(context, '/admindash');
+
+
+
         // ignore: avoid_print
         print("Login successful");
       } else {
@@ -80,7 +93,7 @@ class _AuthfileState extends State<Authfile> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: GoogleFonts.inter(color: Colors.white)),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue.shade700,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -168,8 +181,8 @@ class _AuthfileState extends State<Authfile> {
                         ),
                       ),
                       TextField(
-                         controller: emailController,
-                        cursorColor: Colors.blueAccent,
+                        controller: emailController,
+                        cursorColor: Colors.blue.shade700,
                         decoration: InputDecoration(
                           fillColor: Colors.grey[100],
                           filled: true,
@@ -186,7 +199,7 @@ class _AuthfileState extends State<Authfile> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: Colors.blueAccent,
+                              color: Colors.blue.shade700,
                               width: 2,
                             ),
                           ),
@@ -221,7 +234,7 @@ class _AuthfileState extends State<Authfile> {
                       TextField(
                         controller: passwordController,
                         obscureText: !isPasswordVisible,
-                        cursorColor: Colors.blueAccent,
+                        cursorColor: Colors.blue.shade700,
                         decoration: InputDecoration(
                           fillColor: Colors.grey[100],
                           filled: true,
@@ -251,7 +264,7 @@ class _AuthfileState extends State<Authfile> {
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
-                              color: Colors.blueAccent,
+                              color: Colors.blue.shade700,
                               width: 2,
                             ),
                           ),
@@ -271,31 +284,31 @@ class _AuthfileState extends State<Authfile> {
                     width: screenWidth * 0.7,
                     height: 50,
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: loginWithSupabase,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.security, color: Colors.white),
-                            SizedBox(width: screenHeight * 0.010),
-                            Text(
-                              "Sign In",
-                              style: GoogleFonts.inter(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade700,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
+                      onPressed: loginWithSupabase,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.security, color: Colors.white),
+                          SizedBox(width: screenHeight * 0.010),
+                          Text(
+                            "Sign In",
+                            style: GoogleFonts.inter(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  SizedBox(height: 20,),
+                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),

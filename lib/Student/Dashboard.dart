@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,6 +25,7 @@ class _DashboardState extends State<Dashboard> {
   File? _imageFile;
   String? _uploadedImageUrl;
   bool isUploading = false;
+  bool isLoading = false;
 
   final picker = ImagePicker();
 
@@ -135,7 +137,7 @@ class _DashboardState extends State<Dashboard> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueAccent,
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -161,7 +163,7 @@ class _DashboardState extends State<Dashboard> {
         );
       }
     } catch (error) {
-      print("❌ Error submitting report: $error");
+      print("error submitting report: $error");
     }
   }
 
@@ -169,7 +171,7 @@ class _DashboardState extends State<Dashboard> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: GoogleFonts.inter(color: Colors.white)),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue.shade700,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -179,49 +181,61 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+    setState(() {
+      isLoading = true;
+    });
 
-    // Check if location services are enabled
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      _showError('Location services are disabled.');
-      return;
-    }
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
 
-    // Check location permission
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        _showError('Location permissions are denied.');
+      // Check if location services are enabled
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        _showError('Location services are disabled.');
         return;
       }
+
+      // Check location permission
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _showError('Location permissions are denied.');
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _showError('Location permissions are permanently denied.');
+        return;
+      }
+
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      // Convert lat/long to human-readable address
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
+
+      Placemark place = placemarks[0];
+      String address =
+          "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
+
+      setState(() {
+        locationController.text = address;
+      });
+    } catch (e) {
+      _showError("Error fetching location: $e");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
-
-    if (permission == LocationPermission.deniedForever) {
-      _showError('Location permissions are permanently denied.');
-      return;
-    }
-
-    // Get current position
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    // Convert lat/long to human-readable address
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      position.latitude,
-      position.longitude,
-    );
-
-    Placemark place = placemarks[0];
-    String address =
-        "${place.name}, ${place.subLocality}, ${place.locality}, ${place.administrativeArea}, ${place.postalCode}";
-
-    setState(() {
-      locationController.text = address;
-    });
   }
 
   @override
@@ -235,7 +249,7 @@ class _DashboardState extends State<Dashboard> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue.shade700,
         title: Text(
           "Report",
           style: GoogleFonts.inter(
@@ -321,7 +335,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
+                                backgroundColor: Colors.blue.shade700,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
@@ -350,7 +364,7 @@ class _DashboardState extends State<Dashboard> {
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blueAccent,
+                                backgroundColor: Colors.blue.shade700,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 12,
                                 ),
@@ -399,7 +413,7 @@ class _DashboardState extends State<Dashboard> {
                     'Report Title',
                     style: GoogleFonts.inter(
                       textStyle: TextStyle(
-                        fontSize: 16,
+                        fontSize: responsiveFont(14),
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
                       ),
@@ -422,7 +436,7 @@ class _DashboardState extends State<Dashboard> {
                     child: Padding(
                       padding: const EdgeInsets.all(2),
                       child: TextField(
-                        cursorColor: Colors.blueAccent,
+                        cursorColor: Colors.blue.shade700,
                         controller: titleController,
                         style: GoogleFonts.inter(fontSize: 14),
                         decoration: InputDecoration(
@@ -477,7 +491,7 @@ class _DashboardState extends State<Dashboard> {
                         child: Padding(
                           padding: const EdgeInsets.all(2),
                           child: TextField(
-                            cursorColor: Colors.blueAccent,
+                            cursorColor: Colors.blue.shade700,
                             controller: descriptionController,
                             maxLines: null, // allows unlimited lines
                             keyboardType: TextInputType.multiline,
@@ -516,7 +530,7 @@ class _DashboardState extends State<Dashboard> {
                         'Location',
                         style: GoogleFonts.inter(
                           textStyle: TextStyle(
-                            fontSize: 16,
+                            fontSize: responsiveFont(14),
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
                           ),
@@ -525,7 +539,8 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ],
                 ),
-                Row(
+                SizedBox(height: 10),
+                Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 10, bottom: 4),
@@ -545,13 +560,37 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: Colors.blue.shade700,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                       ),
                     ),
+                    SizedBox(height: 10),
+                    isLoading
+                        ? Platform.isIOS
+                              ? const CupertinoActivityIndicator(radius: 12)
+                              :  CircularProgressIndicator(
+                                  color: Colors.blue.shade700,
+                                  strokeWidth: 3,
+                                )
+                        : locationController.text.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.only(
+                              left: 12,
+                              top: 8,
+                              right: 12,
+                            ),
+                            child: Text(
+                              locationController.text,
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
 
@@ -572,7 +611,7 @@ class _DashboardState extends State<Dashboard> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueAccent,
+                    backgroundColor: Colors.blue.shade700,
                     padding: const EdgeInsets.symmetric(
                       vertical: 15,
                       horizontal: 20,

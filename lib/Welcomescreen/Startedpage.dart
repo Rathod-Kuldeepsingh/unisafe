@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Startedpage extends StatelessWidget {
   const Startedpage({super.key});
@@ -77,8 +78,16 @@ class Startedpage extends StatelessWidget {
                   title: "Admin Login",
                   subtitle: "Manage and review reports",
                   icon: Icons.security_outlined,
-                  onTap: () {
-                    Navigator.pushNamed(context, "/adminauth");
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    final isAdminLoggedIn =
+                        prefs.getBool('isAdminLoggedIn') ?? false;
+
+                    if (isAdminLoggedIn) {
+                      Navigator.pushReplacementNamed(context, '/admindash');
+                    } else {
+                      Navigator.pushNamed(context, '/adminauth');
+                    }
                   },
                 ),
 
@@ -143,7 +152,7 @@ class Startedpage extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: Colors.blueAccent.withOpacity(0.1),
                 ),
-                child: Icon(icon, size: iconSize, color: Colors.blueAccent),
+                child: Icon(icon, size: iconSize, color: Colors.blue.shade700),
               ),
               SizedBox(width: 16),
 
@@ -175,7 +184,7 @@ class Startedpage extends StatelessWidget {
 
               // Arrow Icon
               Icon(Icons.arrow_forward_ios,
-                  size: iconSize * 0.6, color: Colors.blueAccent),
+                  size: iconSize * 0.6, color: Colors.blue.shade700),
             ],
           ),
         ),
@@ -191,7 +200,7 @@ class Startedpage extends StatelessWidget {
           message,
           style: GoogleFonts.inter(color: Colors.white),
         ),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.blue.shade700,
         behavior: SnackBarBehavior.floating,
         margin: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(

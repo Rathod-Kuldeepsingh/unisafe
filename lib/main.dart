@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:unisafe/Admin/Admindashboardscreen.dart';
+import 'package:unisafe/Admin/Adminprofile.dart';
 import 'package:unisafe/Admin/AuthFile.dart';
 import 'package:unisafe/Admin/adminscreen.dart';
 import 'package:unisafe/Student/Dashboard.dart';
@@ -15,7 +17,7 @@ void main() async {
   await dotenv.load(fileName: "assets/.env");
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
-    anonKey: dotenv.env['SUPABASE_API']!  ,
+    anonKey: dotenv.env['SUPABASE_API']!,
   );
 
   runApp(MyApp());
@@ -29,11 +31,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
-   // location me issue aa raha ahai check karna baki hai 
       routes: {
+        "/admindash": (context) => AdminDashboard(),
         "/adminauth": (context) => Authfile(),
         "/student": (context) => Dashboard(),
         "/start": (context) => Startedpage(),
+        "/admin": (context) => AdminProfile(),
       },
     );
   }
