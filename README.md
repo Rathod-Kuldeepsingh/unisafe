@@ -1,96 +1,57 @@
-🏢 Unisafe - University Incident Reporting System
+# 🏢 Unisafe - University Incident Reporting System
 
-Unisafe is a Flutter-based mobile and web application that allows students to anonymously report incidents like ragging, smoking, or harassment within university campuses. It provides a secure and streamlined platform for both students and administrators to manage campus safety effectively.
+**Unisafe** is a Flutter-based mobile and web application that empowers university students to **anonymously report** incidents such as ragging, smoking, harassment, and more. It provides a safe, secure, and structured communication channel between students and administrators to **ensure campus safety**.
 
-🚀 Features
+---
 
-👨‍🎓 Student Side
+## 🚀 Features
 
-Anonymous incident reporting
+### 👨‍🎓 Student Side (Mobile App)
 
-Upload photo, description, location, and timestamp
+- ✅ **Anonymous Reporting** – No login required
+- 📸 **Upload Photo** – Capture and attach incident evidence
+- 📝 **Enter Description** – Provide details about the incident
+- 📍 **Specify Location** – Input area or building where it happened
+- 🕒 **Auto Timestamp** – Record the time of submission
+- 🔄 **Real-time Submission** – Reports pushed directly to admin panel
 
-User-friendly interface
+### 👨‍💼 Admin Side (Web + App)
 
-👨‍💼 Admin Side (Web and App)
+- 🔐 **Login via Email & Password (Supabase Auth)**
+- 📊 **Dashboard View** – List of all submitted reports
+- 🧾 **View Report Details** – Image, description, location, timestamp
+- ❌ **Delete Reports** – Remove handled or false reports
+- ✍️ **Update Admin Name** – Change display name from AppBar
+- 💾 **Auto-Login** – Using SharedPreferences
+- ⚡ **Realtime Updates** – New reports appear instantly
 
-Admin authentication via email/password (Supabase Auth)
+---
 
-Dashboard view of all reported incidents
+## 🧰 Tech Stack
 
-View reports with photo, description, time, and location
+- **Flutter** – Cross-platform mobile & web app development
+- **Supabase**:
+  - 🔐 Auth – Secure admin login
+  - 🗄️ Database – Store reports
+  - ☁️ Storage – Upload images
+  - ⚡ Realtime – Live updates
+- **Google Fonts** – Stylish typography
+- **Shared Preferences** – Persist admin session after login
 
-Delete handled reports
+---
 
-Update profile name via bottom sheet
+## 📱 Screenshots
 
-Real-time updates using Supabase Realtime
+| Student Report Screen | Admin Dashboard |
+|-----------------------|-----------------|
+| ![Student Screenshot](assets/screens/student_form.png) | ![Admin Screenshot](assets/screens/admin_dashboard.png) |
 
-🧰 Tech Stack
+---
 
-Flutter: Cross-platform app development
+## 📋 How to Run
 
-Supabase:
+1. **Clone the repo**:
 
-Auth: Admin login
-
-Database: Report storage
-
-Storage: Image upload
-
-Google Fonts: Beautiful custom fonts
-
-Shared Preferences: Auto-login persistence for admins
-
-📋 How to Run
-
-Clone the repository:
-
+```bash
 git clone https://github.com/your-username/unisafe.git
 cd unisafe
-
-Create .env file in assets/.env:
-
-SUPABASE_URL=your_supabase_url
-SUPABASE_API=your_supabase_anon_key
-
-Run Flutter packages:
-
-flutter pub get
-
-Run the app:
-
-flutter run
-
-🎥 Demo Video
-
-Uploading soon... (Will include screen recording of app workflow, student report creation, and admin panel management)
-
-Or record it using:
-
-OBS Studio (desktop screen)
-
-Scrcpy or Android emulator for Android app view
-
-Combine clips in CapCut, VN Editor, or Kinemaster
-
-🙏 Credits
-
-Built by Rathod Kuldeep as part of MSc IT Semester 1 Final Project.
-
-✨ Future Enhancements
-
-Notification to admins on new reports
-
-Allow students to view report status (resolved/pending)
-
-Map integration to display exact report location
-
-🎉 License
-
-This project is licensed under the MIT License.
-
-For any feedback, contribution or collaboration, feel free to open issues or pull requests.
-
-some add details
-
